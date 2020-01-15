@@ -1,28 +1,57 @@
 import React from "react";
-import { StyleSheet, View, Text, FlatList, Button } from "react-native";
-import BlogContext from "../context/BlogContext";
+import { StyleSheet, View, Text, FlatList, TouchableOpacity } from "react-native";
+import { Context } from "../context/BlogContext";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const IndexScreen = () => {
+const IndexScreen = ({ navigation }) => {
 
-    const { data, addBlogPost } = React.useContext(BlogContext);
+    const { state, deleteBlogPost } = React.useContext(Context);
 
     return (
         <View>
-            <Text>Index Screen</Text>
-            <Button title="Add Post" onPress={addBlogPost}/>
             <FlatList
-                data={data}
+                data={state}
                 keyExtractor={(blogPost) => blogPost.title}
                 renderItem={({ item }) => {
-                    return <Text>{item.title}</Text>
+                    return (
+                        <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}>
+                            <View style={styles.row}>
+                                <Text style={styles.title}>{item.title}</Text>
+                                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                                    <Icon name="trash" size={30} color="#636e72" />
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
+                        
+                    )
                 }}
             />
         </View>
-    )
-}
+    );
+};
 
-const style = StyleSheet.create({
+IndexScreen.navigationOptions = ({ navigation}) => {
+    return (
+        { headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Create')}>
+                <Icon style={{marginRight: 30}} name="plus" size={20} color="gray" />
+            </TouchableOpacity>
+        )}
+    );
+};
 
+const styles = StyleSheet.create({
+  row: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      paddingVertical: 20,
+      paddingHorizontal: 50,
+      borderTopWidth: 1,
+      borderColor: 'gray'
+  },
+  title: {
+      fontSize: 18
+  }
 })
 
 export default IndexScreen;
