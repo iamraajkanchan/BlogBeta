@@ -4,7 +4,17 @@ import {Context} from '../context/BlogContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const IndexScreen = ({navigation}) => {
-  const {state, deleteBlogPost} = React.useContext(Context);
+  const {state, deleteBlogPost, getBlogPosts} = React.useContext(Context);
+
+  React.useEffect(() => {
+    getBlogPosts();
+    const listener = navigation.addListener('didFocus', () => {
+      getBlogPosts();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   return (
     <View>
